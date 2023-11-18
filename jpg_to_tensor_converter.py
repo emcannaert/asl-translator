@@ -43,17 +43,17 @@ class image_data:
 			self.label_converter[label] = iii
 	### give this an image filename and it will return the transformed tensor 
 	def convert_jpg_to_tensor(self,filepath):
-
+		"""
 		image = Image.open(filepath) 
 		# image to a Torch tensor 
 		transform = transforms.Compose([ 
 		transforms.ToTensor(),
 		transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))
-		])   
+		])  """ 
 		#transform = transforms.PILToTensor() 
 		### there is an integrated method for this that is much faster, but it doesn't normalize
-		#return torchvision.io.read_image(filepath)
-		return transform(image)
+		return torchvision.io.read_image(filepath)
+		#return transform(image)
 	### load training data into the instance variable train_data
 	def load_train_data(self):
 		now = time.time()
@@ -61,17 +61,22 @@ class image_data:
 		train_directories = glob.glob(train_path+"/*")
 		n_files = 0
 		print(" ----- Loading training dataset -----")
-		transform = transforms.Compose([
+		"""transform = transforms.Compose([
 			transforms.ToTensor(),
-			transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))])
-		for dir in train_directories:
-			letter = dir.split("/")[-1]
+			transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))])"""
+		for dir_ in train_directories:
+			letter = dir_.split("/")[-1]
 			self.image_files[letter] = []
-				
-			for image_file in glob.glob(dir+"/*"):
+			n_per_letter = 0
+			for image_file in glob.glob(dir_+"/*"):
+				if (n_per_letter > 1200):
+					continue
+				#image = Image.open(image_file) 
+				#self.train_data.append( transform(image))
 				self.image_files[letter].append(image_file)
 				self.train_data.append(self.convert_jpg_to_tensor(image_file) )
 				self.train_labels.append(self.label_converter[letter])
+				n_per_letter+=1
 				n_files +=1
 			print("Finished importing %s"%letter)
 		print("Done with training dataset - converted %i files. Took %f seconds"%(n_files, np.around(time.time()-now)))
@@ -83,14 +88,17 @@ class image_data:
 		test_directories = glob.glob(test_path+"/*")
 		n_files = 0
 		print("----- Loading test dataset -----")
-		transform = transforms.Compose([
+		"""transform = transforms.Compose([
 			transforms.ToTensor(),
-			transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))])
+			transforms.Normalize(mean=(0.5, 0.5, 0.5), std=(0.5, 0.5, 0.5))])"""
 		for image_file in test_directories:
 			letter = image_file.split("_")[-2].split("/")[-1]
 			self.image_files[letter] = []
-
 			self.image_files[letter].append(image_file)
+
+			#image = Image.open(image_file) 
+			#self.train_data.append( transform(image))
+
 			self.test_data.append(self.convert_jpg_to_tensor(image_file))
 			self.test_labels.append(self.label_converter[letter])
 			n_files +=1
