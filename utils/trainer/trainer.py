@@ -1,5 +1,5 @@
 ############################################################################################################
-###	  									trainer.py
+###	  	trainer.py
 ###		Written by Ethan Cannaert Nov 2023
 ###		Acts as the container for all the ingredients necessary for CNN training
 ###		
